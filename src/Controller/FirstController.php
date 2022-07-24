@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class FirstController extends AbstractController
 {
@@ -17,15 +18,14 @@ class FirstController extends AbstractController
         ]);
     }
 
-    #[Route('/sayHello', name: 'say.hello')]
-    public function sayHello(): Response
+    #[Route('/sayHello/{name}/{firstname}', name: 'say.hello')]
+    public function sayHello(Request $request,$name,$firstname): Response
     {
-        $rand = rand(0,10);
-        echo $rand;
-        if($rand % 2 == 0){
-            return $this->redirectToRoute('first');
-        }
-        return $this->render('first/hello.html.twig');
+        //dd($request);
+        return $this->render('first/hello.html.twig',[
+            'nom'=>$name,
+            'prenom'=>$firstname
+        ]);
         //return $this->forward('App\Controller\FirstController::index');
     }
 }
