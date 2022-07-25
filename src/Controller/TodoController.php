@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,7 @@ class TodoController extends AbstractController
     public function index(Request $request): Response
     {
         $session = $request->getSession();
+        
         //afficher notre tableau de todo
         //sinon je l'initialise puis l'affiche
         if(!$session->has('todos')){
@@ -22,14 +24,14 @@ class TodoController extends AbstractController
                 'correction'=>'corriger mes examens'
             ];
             $session->set('todos',$todos);
-            $this->addFlash("info','la liste des Todo vient d'être initialisée");
+            $this->addFlash('info',"la liste des Todo vient d'être initialisée");
         }
 
         //si j'ai mon tableau de mon todo dans ma session, je ne fais que l'afficher
         return $this->render('todo/index.html.twig');
     }
 
-    #[Route("/todo/add/{name}/{content}",name:"todo.add")]
+    #[Route('/todo/add/{name}/{content}',name:"todo.add")]
     public function addTodo(Request $request, $name, $content){
         $session = $request->getsession();
         //vérifier si j'ai mon tableau de todo dans la session
@@ -39,18 +41,18 @@ class TodoController extends AbstractController
             $todos = $session->get('todos');
             if(isset($todos[$name])){
                 //si oui afficher erreur
-                $this->addFlash("info','le todo d'id $name existe déjà dans la liste");
+                $this->addFlash('info',"le todo d'id $name existe déjà dans la liste");
             } else{
                 //si non on l'ajoute et on affiche un message success
                 $todos[$name] = $content;
-                $this->addFlash("success','le todo d'id $name a été ajouté avec succès");
-                $session->set('todos',$todos);               
+                $session->set('todos',$todos);         
+                $this->addFlash('success',"le todo d'id $name a été ajouté avec succès");      
             }
 
         } else{
             //si non
             //afficher une erreur et rediriger vers controller index
-            $this->addFlash("error','la liste des todo n'est pas encore initialisée");
+            $this->addFlash('error',"la liste des todo n'est pas encore initialisée");
         }
 
         return $this->redirectToRoute('todo');
