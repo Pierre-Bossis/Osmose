@@ -28,4 +28,16 @@ class FirstController extends AbstractController
         ]);
         //return $this->forward('App\Controller\FirstController::index');
     }
+
+
+   /* #[route(
+        'multi/{entier1}/{entier2}',
+        name: 'multiplication',
+        requirements: ['entier1'=>'\d+','entier2'=>'\d+'] // \d+ = entier
+        )]*/
+    #[route('multi/{entier1<\d+>}/{entier2<\d+>}',name:'multiplication')]
+    public function multiplication($entier1,$entier2){
+        $resultat = $entier1*$entier2;
+        return new Response("<h1>$resultat</h1>");
+    }
 }
