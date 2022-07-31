@@ -24,7 +24,8 @@ class FirstController extends AbstractController
         //dd($request);
         return $this->render('first/hello.html.twig',[
             'nom'=>$name,
-            'prenom'=>$firstname
+            'prenom'=>$firstname,
+            'path'=>'    '
         ]);
         //return $this->forward('App\Controller\FirstController::index');
     }
