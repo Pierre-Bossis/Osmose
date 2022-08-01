@@ -1,0 +1,26 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}
+    Users list
+{% endblock %}
+
+{% block pageTitle %}
+    Users list
+{% endblock %}
+
+{% block body %}
+        <table class="table">
+            <tr class="table-active">
+                <td>Firstname</td>
+                <td>Name</td>
+                <td>Age</td>
+            </tr>
+            {% for user in users %}
+            <tr class="table-{% if loop.index is odd %}danger {% else %}warning{% endif %}">
+                <td>{{user.firstname}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.age}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+{% endblock %}

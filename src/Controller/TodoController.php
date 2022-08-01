@@ -104,7 +104,7 @@ class TodoController extends AbstractController
             $todos = $session->get('todos');
             if(!isset($todos[$name])){
                 //si oui afficher erreur
-                $this->addFlash('info',"le todo d id $name n existe pas dans la liste");
+                $this->addFlash('error',"le todo d id $name n existe pas dans la liste");
             } else{
                 //si non on l'ajoute et on affiche un message success
                 unset($todos[$name]);
