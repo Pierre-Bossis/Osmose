@@ -3,14 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\PersonneRepository;
+use App\Traits\TimeStampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PersonneRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Personne
 {
+    use TimeStampTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column()]
@@ -32,7 +36,7 @@ class Personne
     private Collection $hobbies;
 
     #[ORM\ManyToOne(inversedBy: 'personnes')]
-    private ?job $job = null;
+    private ?Job $job = null;
 
     public function __construct()
     {
