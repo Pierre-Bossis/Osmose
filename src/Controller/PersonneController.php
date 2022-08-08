@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('personne')]
 
@@ -69,19 +70,43 @@ class PersonneController extends AbstractController
     ]);
     }
 
-    #[Route('/add', name: 'personne.add')]
-    public function addPersonne(ManagerRegistry $doctrine): Response
+    #[Route('/edit/{id?0}', name: 'personne.edit')]
+    public function addPersonne(Personne $personne=null,ManagerRegistry $doctrine, Request $request ): Response
     {
-        $entityManager = $doctrine->getManager();
+        $new = false;
 
-        $personne = new Personne();
+        if(!$personne){
+            $new = true;
+            $personne = new Personne();
+        }
         // $personne est l'image de notre formulaire
         $form = $this->createForm(PersonneType::class,$personne);
         $form->remove('createdAt');
         $form->remove('updatedAt');
-        return $this->render('personne/add-personne.html.twig', [
-            'form'=>$form->createView()
-        ]);
+        //Mon formulaire va aller traiter la requete
+        $form->handleRequest($request);
+        //est-ce que le formulaire a été soumis ?
+        if($form-> isSubmitted()){
+            // si oui ajouter l'objet personne dans la base de donnée.
+            $manager = $doctrine->getManager();
+            $manager->persist($personne);
+            $manager->flush();
+            // afficher un message de succès
+            if($new){
+                $message = " a été ajouté avec succès.";
+            } else{
+                $message = " a été mis à jour avec succès.";
+            }
+            $this->addFlash('success',$personne->getName(). $message);
+            // rediriger vers la liste des personnes
+            return $this->redirectToRoute('personne.list');
+
+        } else{
+            // si non afficher le formulaire 
+            return $this->render('personne/add-personne.html.twig', [
+                'form'=>$form->createView()
+            ]);
+        }
     }
 
     #[Route('/delete/{id}', name:'personne.delete')]
@@ -99,7 +124,7 @@ class PersonneController extends AbstractController
         //sinon => retourner un flashMessage d'erreur
             $this->addFlash('error',"Personne inexistante.");
         }
-        return $this->redirectToRoute('personne.list.alls');
+        return $this->redirectToRoute('personne.list');
 
 
     }
