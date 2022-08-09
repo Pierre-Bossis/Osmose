@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('personne')]
 
@@ -71,7 +72,7 @@ class PersonneController extends AbstractController
     }
 
     #[Route('/edit/{id?0}', name: 'personne.edit')]
-    public function addPersonne(Personne $personne=null,ManagerRegistry $doctrine, Request $request ): Response
+    public function addPersonne(Personne $personne=null,ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger ): Response
     {
         $new = false;
 
@@ -86,8 +87,28 @@ class PersonneController extends AbstractController
         //Mon formulaire va aller traiter la requete
         $form->handleRequest($request);
         //est-ce que le formulaire a été soumis ?
-        if($form-> isSubmitted()){
+        if($form-> isSubmitted() && $form->isValid()){
             // si oui ajouter l'objet personne dans la base de donnée.
+
+            //créer nom du fichier pour eviter que deux noms encodés dans la BDD soient identiques
+            $photo = $form->get('photo')->getData();
+            if($photo){
+                $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photo->guessExtension();
+
+                try{
+                    $photo->move(
+                        $this->getParameter('personne_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e){
+
+                }
+                $personne->setImage($newFilename);
+            }
+
+
             $manager = $doctrine->getManager();
             $manager->persist($personne);
             $manager->flush();
