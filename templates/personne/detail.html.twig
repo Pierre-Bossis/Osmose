@@ -11,6 +11,38 @@
 {% block body %}
 <div class="alert alert-success">
     {{ personne.firstname }} {{ personne.name }} a {{ personne.age }} ans
+    {% if personne.createdAt %}
+        <br>
+        <br>
+        Crée le {{personne.createdAt}}.
+    {% endif %}
+    {% if personne.profile %}
+        <br>
+        <br>
+        Profil associé : {{personne.profile}}.
+    {% endif %}
+
+    {% if personne.hobbies is not empty %}
+        <br>
+        <br>
+        Hobbys : <br>
+        <ul>
+        {% for hobby in personne.hobbies %}
+            <li>{{ hobby.designation }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if personne.job %}
+        <br>
+        <br>
+        Job :  {{personne.job}}.
+    {% endif %}
+    {% if personne.image %}
+        <br>
+        <br>
+        <img src="{{app.request.basepath}}/uploads/personnes/{{personne.image}}" alt="monimg" />
+    {% endif %}
 </div>
 
 {% endblock %}
