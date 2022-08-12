@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Personne;
+use App\Service\Helpers;
+use App\Service\UploaderService;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\PersonneType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,11 +13,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Psr\Log\LoggerInterface;
 
 #[Route('personne')]
 
 class PersonneController extends AbstractController
 {
+
+    public function __construct(private LoggerInterface $logger, private Helpers $helper)
+    {
+        
+    }
+
+
     #[Route('/', name:'personne.list')]
     public function index(ManagerRegistry $doctrine) : Response{
         $repository = $doctrine->getRepository(Personne::class);
@@ -57,6 +67,7 @@ class PersonneController extends AbstractController
 
     #[Route('/alls/{page?1}/{nbre?12}', name:'personne.list.alls')]
     public function indexAlls(ManagerRegistry $doctrine, $page, $nbre) : Response{
+        echo ($this->helper->sayCoucou());
         $repository = $doctrine->getRepository(Personne::class);
         $nbPersonne = $repository->count([]);
         $nbPage = ceil($nbPersonne / $nbre);
@@ -72,7 +83,12 @@ class PersonneController extends AbstractController
     }
 
     #[Route('/edit/{id?0}', name: 'personne.edit')]
-    public function addPersonne(Personne $personne=null,ManagerRegistry $doctrine, Request $request, SluggerInterface $slugger ): Response
+    public function addPersonne(
+        Personne $personne=null,
+        ManagerRegistry $doctrine,
+        Request $request,
+        UploaderService $uploaderService
+        ): Response
     {
         $new = false;
 
@@ -93,19 +109,8 @@ class PersonneController extends AbstractController
             //créer nom du fichier pour eviter que deux noms encodés dans la BDD soient identiques
             $photo = $form->get('photo')->getData();
             if($photo){
-                $originalFilename = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$photo->guessExtension();
-
-                try{
-                    $photo->move(
-                        $this->getParameter('personne_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e){
-
-                }
-                $personne->setImage($newFilename);
+                $directory =  $this->getParameter('personne_directory');
+                $personne->setImage($uploaderService->uploadFile($photo, $directory));
             }
 
 
