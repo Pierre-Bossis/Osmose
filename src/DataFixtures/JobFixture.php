@@ -23,7 +23,8 @@ class JobFixture extends Fixture
             "Actuaire",
             "Ergothérapeute",
             "Directeur des Ressources Humaines",
-            "Hygiéniste dentaire"
+            "Hygiéniste dentaire",
+            "Developpeur PHP"
         ];
         for($i=0;$i<count($data);$i++){
             $job = new Job();

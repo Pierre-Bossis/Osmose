@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\MailerService;
 use App\Entity\Personne;
 use App\Service\Helpers;
 use App\Service\UploaderService;
@@ -87,7 +88,8 @@ class PersonneController extends AbstractController
         Personne $personne=null,
         ManagerRegistry $doctrine,
         Request $request,
-        UploaderService $uploaderService
+        UploaderService $uploaderService,
+        MailerService $mailer
         ): Response
     {
         $new = false;
@@ -123,7 +125,9 @@ class PersonneController extends AbstractController
             } else{
                 $message = " a été mis à jour avec succès.";
             }
+            $mailMessage = $personne->getFirstname().' '.$personne->getName().' '.$message;
             $this->addFlash('success',$personne->getName(). $message);
+            $mailer->sendEmail(content: $mailMessage);
             // rediriger vers la liste des personnes
             return $this->redirectToRoute('personne.list');
 

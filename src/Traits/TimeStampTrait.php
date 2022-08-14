@@ -3,15 +3,18 @@
 namespace App\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\DBAL\Types\Types;
 
 trait TimeStampTrait
 {
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $createdAt = null;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -37,14 +40,19 @@ trait TimeStampTrait
         return $this;
     }
 
-    #[ORM\PrePersist]
-    public function onPrePersist(){
-        $this->createdAt = new \dateTime();
-        $this->updatedAt = new \dateTime();
+    /**
+     * @ORM\PrePersist()
+     */
+    public function onPrePersist() {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
-    #[ORM\PreUpdate]
-    public function onPreUpdate(){
-        $this->updatedAt = new \dateTime();
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function onPreUpdate() {
+        $this->updatedAt = new \DateTime();
     }
+
 }

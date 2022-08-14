@@ -32,7 +32,7 @@ class HobbyFixture extends Fixture
             "Jouer aux fléchettes",
             "Voyager",
             "Cinéma",
-            "Jeux vidéso"
+            "Jeux vidéos"
 
         ];
         for($i=0;$i<count($data);$i++){
