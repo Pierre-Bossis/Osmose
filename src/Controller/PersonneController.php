@@ -76,7 +76,7 @@ class PersonneController extends AbstractController
 
     #[Route('/alls/{page?1}/{nbre?12}', name:'personne.list.alls')]
     public function indexAlls(ManagerRegistry $doctrine, $page, $nbre) : Response{
-        echo ($this->helper->sayCoucou());
+        //echo ($this->helper->sayCoucou());
         $repository = $doctrine->getRepository(Personne::class);
         $nbPersonne = $repository->count([]);
         $nbPage = ceil($nbPersonne / $nbre);

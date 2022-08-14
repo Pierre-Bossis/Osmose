@@ -11,10 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MailerService
 {
+    private $replyTo;
 
-    public function __construct(private MailerInterface $mailer)
+    public function __construct(private MailerInterface $mailer, $replyTo)
     {
-
+        $this->replyTo = $replyTo;
     }
    // #[Route('/email')]
     public function sendEmail(
@@ -28,7 +29,7 @@ class MailerService
             ->to($to)
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
-            //->replyTo('fabien@example.com')
+            ->replyTo($this->replyTo)
             //->priority(Email::PRIORITY_HIGH)
             ->subject($subject)
             ->text('Sending emails is fun again!')
