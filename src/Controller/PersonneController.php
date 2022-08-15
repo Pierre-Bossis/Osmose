@@ -141,7 +141,7 @@ class PersonneController extends AbstractController
             $this->addFlash('success',$personne->getName(). $message);
             $mailer->sendEmail(content: $mailMessage);
             // rediriger vers la liste des personnes
-            return $this->redirectToRoute('personne.list');
+            return $this->redirectToRoute('personne.list.alls');
 
         } else{
             // si non afficher le formulaire 
@@ -166,7 +166,7 @@ class PersonneController extends AbstractController
         //sinon => retourner un flashMessage d'erreur
             $this->addFlash('error',"Personne inexistante.");
         }
-        return $this->redirectToRoute('personne.list');
+        return $this->redirectToRoute('personne.list.alls');
 
 
     }
