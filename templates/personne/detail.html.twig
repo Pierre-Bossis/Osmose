@@ -11,6 +11,9 @@
 {% block body %}
 <div class="alert alert-success">
     {{ personne.firstname }} {{ personne.name }} a {{ personne.age }} ans
+    {% if app.user and app.user.email is not null %}
+        <p>Created by : {{app.user.email}}</p>
+    {% endif %}
     {% if personne.createdAt %}
         <br>
         <br>
