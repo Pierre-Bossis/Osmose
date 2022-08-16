@@ -17,13 +17,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Event\AddPersonneEvent;
 
 #[Route('personne'), IsGranted('ROLE_USER')]
 
 class PersonneController extends AbstractController
 {
 
-    public function __construct(private LoggerInterface $logger, private Helpers $helper)
+    public function __construct(
+        private LoggerInterface $logger,
+        private Helpers $helper,
+        private EventDispatcherInterface $dispatcher 
+         )
     {
         
     }
@@ -136,6 +142,14 @@ class PersonneController extends AbstractController
             $manager = $doctrine->getManager();
             $manager->persist($personne);
             $manager->flush();
+
+            if($new){
+                // on créé notre évenement.
+                $addPersonneEvent = new AddPersonneEvent($personne);
+                // on va maintenant dispatcher cet évenement.
+                $this->dispatcher->dispatch($addPersonneEvent, AddPersonneEvent::ADD_PERSONNE_EVENT);
+            }
+
             // afficher un message de succès
             $mailMessage = $personne->getFirstname().' '.$personne->getName().' '.$message;
             $this->addFlash('success',$personne->getName(). $message);
