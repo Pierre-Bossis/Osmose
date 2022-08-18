@@ -78,7 +78,7 @@ class PersonneController extends AbstractController
             $this->addFlash('error',"La personne n'existe pas.");
             return $this->redirectToRoute('personne.list');
         }
-
+       // dd($personne);
        return $this->render('personne/detail.html.twig',['personne'=>$personne]);
     }
 

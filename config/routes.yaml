@@ -5,3 +5,7 @@ controllers:
 todo:
     path: /todo
     controller: App\Controller\TodoController
+
+homepage:
+    path: /
+    controller: App\Controller\HomepageController
