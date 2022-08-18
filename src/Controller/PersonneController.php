@@ -19,6 +19,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Event\AddPersonneEvent;
+use App\Event\ListAllPersonnesEvent;
 
 #[Route('personne'), IsGranted('ROLE_USER')]
 
@@ -89,6 +90,8 @@ class PersonneController extends AbstractController
         $nbPersonne = $repository->count([]);
         $nbPage = ceil($nbPersonne / $nbre);
         $personnes = $repository->findBy([],[], $nbre,($page -1)* $nbre);
+        $listAllPersonneEvent = new ListAllPersonnesEvent(count($personnes));
+        $this->dispatcher->dispatch($listAllPersonneEvent, ListAllPersonnesEvent::LIST_ALL_PERSONNE_EVENT);
 
        return $this->render('personne/index.html.twig',[
         'personnes'=>$personnes,
@@ -151,9 +154,7 @@ class PersonneController extends AbstractController
             }
 
             // afficher un message de succès
-            $mailMessage = $personne->getFirstname().' '.$personne->getName().' '.$message;
             $this->addFlash('success',$personne->getName(). $message);
-            $mailer->sendEmail(content: $mailMessage);
             // rediriger vers la liste des personnes
             return $this->redirectToRoute('personne.list.alls');
 

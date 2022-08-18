@@ -65,6 +65,7 @@ class PersonneType extends AbstractType
                         'mimeTypes'=>[
                             'image/jpg',
                             'image/jpeg',
+                            'image/png',
                             'image/gif',
                         ],
                         'mimeTypesMessage'=>'Please upload a valid Image.',
